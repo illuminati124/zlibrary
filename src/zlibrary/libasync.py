@@ -284,7 +284,7 @@ class ResultPaginator:
 
 
 class AsyncZlib:
-    domain = "1lib.in"
+    domain = "https://1lib.in"
     semaphore = True
     __semaphore = asyncio.Semaphore(64)
 
