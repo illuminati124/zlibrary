@@ -12,7 +12,7 @@ from .logger import logger
 from .exception import LoopError, EmptyQueryError, NoDomainError, ParseError
 
 
-ZLIB_DOMAIN = "https://z-lib.org/"
+ZLIB_DOMAIN = "https://1lib.in/"
 LOGIN_DOMAIN = "https://singlelogin.me/rpc.php"
 HEAD = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
@@ -284,30 +284,12 @@ class ResultPaginator:
 
 
 class AsyncZlib:
-    domain = ""
+    domain = "1lib.in"
     semaphore = True
     __semaphore = asyncio.Semaphore(64)
 
     cookies = None
     _jar = None
-
-    async def init(self, no_semaphore=False):
-        page = await self._r(ZLIB_DOMAIN)
-        soup = bsoup(page, features='lxml')
-        check = soup.find('div', { 'class': 'domain-check-error hidden' })
-        if not check:
-            raise NoDomainError
-
-        dom = soup.find('div', { 'class': 'domain-check-success' })
-        if not dom:
-            raise NoDomainError
-
-        self.domain = "https://%s" % dom.text.strip()
-        logger.debug("Set working domain: %s" % self.domain)
-
-        if no_semaphore:
-            self.semaphore = False
-
     async def _r(self, url: str):
         if self.semaphore:
             async with self.__semaphore:
